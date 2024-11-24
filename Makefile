@@ -31,6 +31,6 @@ sqlc:
 test:
 	go test -v -cover -count=1 ./...
 
-.PHONY: postgres createdb dropdb migrateup migratedown start stop list rmcontainer
+.PHONY: postgres createdb dropdb migrateup migratedown start stop list rmcontainer sqlc test
 
 ## https://sqlc.dev/
