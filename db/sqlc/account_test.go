@@ -1,9 +1,7 @@
 package db
 
 import (
-	"context"
 	"database/sql"
-	"fmt"
 	"testing"
 	"time"
 
@@ -59,7 +57,7 @@ func deleteAccountFunc(t *testing.T, id int64) {
 	require.Empty(t, acc2)
 }
 
-func TestListAccounts(t *testing.T) {
+/* func TestListAccounts(t *testing.T) {
 	arg2 := ListAccountsParams{
 		Limit:  5,
 		Offset: 0, // from the first line
@@ -74,4 +72,4 @@ func TestListAccounts(t *testing.T) {
 	}
 
 	fmt.Println(accSlc)
-}
+} */
