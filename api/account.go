@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"net/http"
 
 	db "github.com/eternalbytes/simplebank/db/sqlc"
@@ -10,6 +11,7 @@ import (
 type createAccountRequest struct {
 	Owner    string `json:"owner" binding:"required"`
 	Currency string `json:"currency" binding:"required,oneof=USD EUR BRL"`
+	Balance  int64  `json:"balance" binding:"required"`
 }
 
 func (server *Server) createAccount(ctx *gin.Context) {
@@ -22,7 +24,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	args := db.CreateAccountParams{
 		Owner:    req.Owner,
 		Currency: req.Currency,
-		Balance:  0,
+		Balance:  req.Balance,
 	}
 
 	account, err := server.store.CreateAccount(ctx, args)
@@ -31,5 +33,29 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, account)
+	ctx.JSON(http.StatusOK, &account)
+}
+
+type getAccountRequest struct {
+	ID int64 `uri:"id" binding:"required,min=1"`
+}
+
+func (server *Server) getAccount(ctx *gin.Context) {
+	var req getAccountRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorMessage(err))
+		return
+	}
+
+	account, err := server.store.GetAccount(ctx, req.ID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorMessage(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorMessage(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, &account)
 }

@@ -20,7 +20,7 @@ stop:
 	sudo docker stop postgres17
 
 list:
-	sudo docker ps
+	docker ps
 
 rmcontainer:
 	sudo docker rm postgres17
@@ -31,6 +31,9 @@ sqlc:
 test:
 	go test -v -cover -count=1 ./...
 
-.PHONY: postgres createdb dropdb migrateup migratedown start stop list rmcontainer sqlc test
+server:
+	go run main.go
+
+.PHONY: postgres createdb dropdb migrateup migratedown start stop list rmcontainer sqlc test server
 
 ## https://sqlc.dev/
